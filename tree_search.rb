@@ -186,13 +186,26 @@ class Tree
   end
 
   def balanced?(node)
-    if node.left == nil 
+    difference = depth(node.left) - depth(node.right)
+    difference *= -1 if difference < 0
+    if node == nil 
       return nil
-    else 
-      return true if depth(node.left) - depth(node.right) <= 1
+    elsif difference <= 1  
+      return true
+    else  
+      return false 
     end 
-    false 
   end
+  
+  def rebalance!
+    array = self.tree_values(self.root)
+    array = array.uniq.sort
+    self.root = self.build_tree(array)
+  end 
+
+
+
+
   def pre_order(node)
     if node == nil 
       return false 
@@ -213,7 +226,7 @@ class Tree
 
     
 
-   in_order(node.left) {|e| puts e}
+    in_order(node.left) {|e| puts e}
     if block_given? 
       yield (node.value)
     end 
@@ -285,13 +298,44 @@ class Test
   end 
 end
 
-
-
+=begin
 #Test.run
 #Test.loop_run(10000)         # run test 10k times 
-my_tree = Tree.new([1,2,3,4,5,6,7,8,9,10])
+my_tree = Tree.new([1])
 #my_tree = Tree.new(['a','b','c','d','e','f','g','i','j','k'])
 #my_tree.level_order(my_tree.root) {|e|  puts e.value}
 #my_tree.in_order(my_tree.root) {|e| puts e}
+#puts my_tree.balanced?(my_tree.root)
+my_tree.insert(2,my_tree.root)
+my_tree.insert(3,my_tree.root)
+my_tree.insert(4,my_tree.root)
+my_tree.insert(5,my_tree.root)
 puts my_tree.balanced?(my_tree.root)
+puts my_tree.root.value 
+my_tree.rebalance! 
+puts my_tree.root.value
+puts my_tree.balanced?(my_tree.root) 
+=end 
 
+array = Array.new(15) { rand(1..100) }
+t = Tree.new(array)
+puts "object successfully made" if t != nil 
+puts "this is a balanced tree" if t.balanced?(t.root) == true 
+puts "level order:"
+t.recursive_level_order
+puts "pre_order:"
+t.pre_order(t.root)
+puts "in order:"
+t.in_order(t.root)
+puts "post order:"
+t.post_order(t.root)
+
+t.insert(200,t.root)
+t.insert(300,t.root)
+t.insert(400,t.root)
+t.delete(400,t.root)
+t.insert(500,t.root)  #unbalance the tree 
+puts "is it balanced?"
+puts "no not balanceed" if t.balanced?(t.root) == false 
+t.rebalance!
+puts "yes it's re-balanced!!!!" if t.balanced?(t.root) == true 
